@@ -4,6 +4,12 @@ import ProductData from './ProductData.mjs';
 // Create a instance of ProductList class in the main.js file
 import ProductList from './ProductList.mjs';
 
+import { getParam } from './utils.mjs';
+
+
+const productId = getParam('product');
+console.log('Product ID:', productId);
+
 // We create an instance of ProductData with the category 'tents'
 const dataSource = new ProductData('tents');
 
