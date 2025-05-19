@@ -30,7 +30,8 @@ export function getParam(param) {
   return product
 }
 
-export function renderListWithTemplate(template, parentElement, list, position = "afterbegin", clear = false) {
+// function to render a list of items using a template
+export function renderListWithTemplate(template, parentElement, list, position = "afterbegin", clear = false) { 
   const htmlStrings = list.map(template);
   // if clear is true we need to clear out the contents of the parent.
   if (clear) {
