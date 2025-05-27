@@ -42,8 +42,7 @@ export function renderListWithTemplate(template, parentElement, list, position =
 
 // function to render a header using a template
 export function renderWithTemplate(template, parentElement, data, callback) {
-  const fragment = document.createRange().createContextualFragment(template);
-  parentElement.replaceChildren(fragment);
+  parentElement.innerHTML = template;
   if(callback) {
     callback(data);
   }
