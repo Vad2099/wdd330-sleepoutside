@@ -28,9 +28,17 @@ function cartItemTemplate(item) {
   <p class="cart-card__color">${item.Colors[0].ColorName}</p>
   <p class="cart-card__quantity">qty: ${item.quantity || 1}</p>
   <p class="cart-card__price">$${item.FinalPrice}</p>
-</li>`;
+  </li>`;
 
   return newItem;
 }
+
+//function calculateCartTotal() {
+  //const cartItems = getLocalStorage('so-cart');
+  //const total = cartItems.reduce((sum, item) => sum + item.FinalPrice * item.Quantity, 0);
+  //document.querySelector('#total').textContent = `$${total.toFixed(2)}`;
+//}
+
+//calculateCartTotal();
 
 renderCartContents();
