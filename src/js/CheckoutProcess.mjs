@@ -84,19 +84,33 @@ export default class CheckoutProcess {
   async checkout() {
     const formElement = document.forms["checkout"];
     const order = formDataToJSON(formElement);
-
+  
     order.orderDate = new Date().toISOString();
     order.orderTotal = this.orderTotal;
     order.tax = this.tax;
     order.shipping = this.shipping;
     order.items = packageItems(this.list);
-    //console.log(order);
-
+  
     try {
       const response = await services.checkout(order);
-      console.log(response);
+      
+      // Si llegamos aquí, la orden fue exitosa
+      // Limpiamos el carrito
+      localStorage.removeItem(this.key);
+  
+      // Redirigimos a la página de éxito
+      window.location.href = "/checkout/success.html";
     } catch (err) {
-      console.log(err);
+      console.error("Error en checkout:", err);
+      
+      // Mostramos mensaje de error detallado del servidor
+      if (err.name === "servicesError" && err.message.message) {
+        alertMessage(`Error: ${err.message.message}`);
+      } else {
+        alertMessage("Ocurrió un error inesperado al procesar tu orden.");
+      }
     }
-  }
+    }
+    
+    
 }
