@@ -2,6 +2,16 @@ import { getLocalStorage, setLocalStorage, loadHeaderFooter } from "./utils.mjs"
 
 loadHeaderFooter();
 
+function animateCartIcon() {
+  const cartIcon = document.getElementById("cartIcon");
+  if (!cartIcon) return;
+
+  cartIcon.classList.add("animate");
+  cartIcon.addEventListener("animationend", () => {
+    cartIcon.classList.remove("animate");
+  }, { once: true });
+}
+
 function renderCartContents() {
   let cartItems = getLocalStorage("so-cart") || [];
 
@@ -85,6 +95,7 @@ function addQuantityListeners(cartItems) {
         cartItems[itemIndex].quantity = newQuantity;
         setLocalStorage("so-cart", cartItems);
         updateCartTotal(cartItems);
+        animateCartIcon();
       }
     });
   });
