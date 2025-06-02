@@ -1,43 +1,49 @@
-import { getLocalStorage, loadHeaderFooter } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, loadHeaderFooter } from "./utils.mjs";
 
 loadHeaderFooter();
 
-const productList = document.querySelector(".product-list");
-const cartFooter = document.querySelector(".cart-footer");
-const cartTotalElement = document.querySelector("#cartTotal");
-
 function renderCartContents() {
-  let cartItems = getLocalStorage("so-cart");
+  let cartItems = getLocalStorage("so-cart") || [];
 
-  // Si no hay elementos o no es un array, mostrar mensaje vacío
+  const productList = document.querySelector(".product-list");
+
+  // Carrito vacío
   if (!Array.isArray(cartItems) || cartItems.length === 0) {
     productList.innerHTML = `<li><p>Your cart is empty.</p></li>`;
     hideCartFooter();
     return;
   }
 
-  const htmlItems = cartItems.map(cartItemTemplate).join("");
-  productList.innerHTML = htmlItems;
+  // Renderizar productos
+  const htmlItems = cartItems.map((item) => cartItemTemplate(item));
+  productList.innerHTML = htmlItems.join("");
 
-  showCartFooter();
+  // Activar inputs para cambiar cantidad
+  addQuantityListeners(cartItems);
+
+  // Mostrar footer y total
   updateCartTotal(cartItems);
+  showCartFooter();
 }
 
 function cartItemTemplate(item) {
-  const color = item.Colors?.[0]?.ColorName || "No color specified";
+  const colorName = item.Colors && item.Colors.length > 0 ? item.Colors[0].ColorName : "No color";
   const quantity = item.quantity || 1;
 
-  return `
-    <li class="cart-card divider">
-      <a href="#" class="cart-card__image">
-        <img src="${item.Image}" alt="${item.Name}" />
-      </a>
-      <a href="#"><h2 class="card__name">${item.Name}</h2></a>
-      <p class="cart-card__color">${color}</p>
-      <p class="cart-card__quantity">qty: ${quantity}</p>
-      <p class="cart-card__price">$${item.FinalPrice}</p>
-    </li>
-  `;
+  return `<li class="cart-card divider">
+    <a href="#" class="cart-card__image">
+      <img src="${item.Image}" alt="${item.Name}" />
+    </a>
+    <a href="#">
+      <h2 class="card__name">${item.Name}</h2>
+    </a>
+    <p class="cart-card__color">${colorName}</p>
+    <p class="cart-card__quantity">
+      qty: 
+      <input type="number" min="1" value="${quantity}" data-id="${item.Id}" class="quantity-input">
+    </p>
+    <p class="cart-card__price">$${item.FinalPrice}</p>
+  </li>`;
 }
 
 function calculateCartTotal(items) {
@@ -49,15 +55,39 @@ function calculateCartTotal(items) {
 
 function updateCartTotal(items) {
   const total = calculateCartTotal(items);
-  cartTotalElement.textContent = total.toFixed(2);
+  const totalElement = document.querySelector("#cartTotal");
+  if (totalElement) {
+    totalElement.textContent = total.toFixed(2);
+  }
 }
 
 function showCartFooter() {
-  cartFooter?.classList.remove("hide");
+  document.querySelector(".cart-footer").classList.remove("hide");
 }
 
 function hideCartFooter() {
-  cartFooter?.classList.add("hide");
+  document.querySelector(".cart-footer").classList.add("hide");
+}
+
+function addQuantityListeners(cartItems) {
+  const inputs = document.querySelectorAll(".quantity-input");
+
+  inputs.forEach((input) => {
+    input.addEventListener("change", (e) => {
+      const newQuantity = parseInt(e.target.value);
+      const productId = e.target.dataset.id;
+
+      if (isNaN(newQuantity) || newQuantity < 1) return;
+
+      const itemIndex = cartItems.findIndex((item) => item.Id === productId);
+
+      if (itemIndex !== -1) {
+        cartItems[itemIndex].quantity = newQuantity;
+        setLocalStorage("so-cart", cartItems);
+        updateCartTotal(cartItems);
+      }
+    });
+  });
 }
 
 
