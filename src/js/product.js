@@ -1,8 +1,8 @@
-import { getParam, loadHeaderFooter, alertMessage, getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { getParam, alertMessage, getLocalStorage, setLocalStorage } from "./utils.mjs";
 import ExternalServices from "./ExternalServices.mjs";
 import ProductDetails from "./productDetails.mjs";
 
-loadHeaderFooter();
+
 
 const dataSource = new ExternalServices("tents");
 const productID = getParam("product");

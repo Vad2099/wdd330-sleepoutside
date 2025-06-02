@@ -59,9 +59,10 @@ export async function loadHeaderFooter() {
   const headerElement = document.querySelector("#main-header");
   const footerElement = document.querySelector("#main-footer");
 
-  renderWithTemplate(headerTemplate, headerElement);
+  renderWithTemplate(headerTemplate, headerElement, null, initSearchForm);
   renderWithTemplate(footerTemplate, footerElement);
 }
+
 
 export function alertMessage(message, scroll = true) {
   const alert = document.createElement('div');
@@ -82,3 +83,17 @@ export function alertMessage(message, scroll = true) {
 
   if (scroll) window.scrollTo(0, 0);
 }
+
+export function initSearchForm() {
+  const form = document.querySelector("#searchForm");
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const searchQuery = document.querySelector("#searchInput").value.trim();
+      if (searchQuery.length > 0) {
+        window.location.href = `/product-listing/index.html?search=${encodeURIComponent(searchQuery)}`;
+      }
+    });
+  }
+}
+
